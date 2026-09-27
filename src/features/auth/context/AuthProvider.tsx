@@ -1,17 +1,36 @@
-import { createContext, useEffect, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import auth from "../../../api/auth"
+import apiClient from "../../../api/client"
 
 type User = {
     name: String
+}
+
+type AuthProviderValue = {
+    user: User | undefined,
+    status: AuthStatus,
+    login: (username: string, password: string) => Promise<void>
 }
 
 type AuthProviderProps = {
     children: ReactNode
 }
 
-type AuthStatus = | "loading" | "authenticated" | "authenticated";
+type AuthStatus = | "loading" | "authenticated" | "unauthenticated";
 
-const AuthContext = createContext<User | undefined>(undefined);
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if(!context){
+        throw new Error('useAuth must be used within AuthProvider')
+    }
+
+    return context;
+}
+
+
+const AuthContext = createContext<AuthProviderValue | undefined>(undefined);
+
+
 
 const AuthProvider = ({ children } : AuthProviderProps) => {
     
@@ -22,17 +41,26 @@ const AuthProvider = ({ children } : AuthProviderProps) => {
         const loadUser = async () => {
             try{
                 const response = await auth.getMe();
-                console.log(response);
+                setUser(response.data);
+                setStatus('authenticated');
             }catch(error){
-                console.log(error);
+                setStatus('unauthenticated');
             }
         }
 
         loadUser();
     }, [])
     
+    const login = async (username: string, password: string) => {
+        await auth.login({username, password});
+        const response = await auth.getMe();
+        //console.log(response);
+        setUser(response.data);
+        setStatus('authenticated');
+    }
+
     return (
-        <AuthContext.Provider value={ {user, status} }>
+        <AuthContext.Provider value={ {user, status, login} }>
             {children}
         </AuthContext.Provider>
     )

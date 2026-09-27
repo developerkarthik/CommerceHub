@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 import auth from "../../api/auth";
 import { useNavigate } from "react-router";
+import { useAuth } from "./context/AuthProvider";
 
 const Login = () => {
 
@@ -16,6 +17,9 @@ const Login = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const navigate = useNavigate();
+
+    const { login } = useAuth();
+
     const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
 
@@ -36,14 +40,9 @@ const Login = () => {
         setIsSubmitting(true);
         try{    
             
-            await auth.login({
-                username,
-                password
-            });
+            await login(username, password);
 
-            await auth.getMe();
-
-            navigate('/');
+            navigate('/', { replace: true});
 
         }catch(error){
             console.log(errors);

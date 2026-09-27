@@ -15,7 +15,8 @@ interface RegisterRequest {
 }
 
 interface RegisterResponse {
-    message: string
+    message: string,
+    data: any
 }
 
 interface MeResponse {
