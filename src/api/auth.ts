@@ -19,10 +19,6 @@ interface RegisterResponse {
     data: any
 }
 
-interface MeResponse {
-    name: string
-}
-
 const login = (data: LoginRequest) => {
     return apiClient<LoginResponse>('/auth/login', {
         method: 'POST',

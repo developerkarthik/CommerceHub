@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import auth from "../../../api/auth"
-import apiClient from "../../../api/client"
 
 type User = {
     name: String
@@ -9,7 +8,8 @@ type User = {
 type AuthProviderValue = {
     user: User | undefined,
     status: AuthStatus,
-    login: (username: string, password: string) => Promise<void>
+    login: (username: string, password: string) => Promise<void>,
+    register: (username: string, password:string) => Promise<void>
 }
 
 type AuthProviderProps = {
@@ -59,8 +59,13 @@ const AuthProvider = ({ children } : AuthProviderProps) => {
         setStatus('authenticated');
     }
 
+    const register = async (username: string, password: string) => {
+        await auth.register({ username, password });
+    }
+
+
     return (
-        <AuthContext.Provider value={ {user, status, login} }>
+        <AuthContext.Provider value={ {user, status, login, register} }>
             {children}
         </AuthContext.Provider>
     )

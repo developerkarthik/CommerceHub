@@ -1,5 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 import auth from "../../api/auth";
+import { useAuth } from "./context/AuthProvider";
+import { useNavigate } from "react-router";
 
 const Register = () => {
 
@@ -14,6 +16,10 @@ const Register = () => {
     }>({});
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { register } = useAuth();
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (event: SubmitEvent) => {
         event.preventDefault();
@@ -42,8 +48,8 @@ const Register = () => {
 
         setIsSubmitting(true);
         try {
-            const res = await auth.register({ username, password });
-            console.log(res);
+            await register(username, password);
+            navigate('/login', {replace: true});
         } catch (error) {
             console.error(error);
         } finally {

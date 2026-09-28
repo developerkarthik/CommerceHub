@@ -4,8 +4,8 @@ import './App.css'
 import Login from './features/auth/Login'
 import Register from './features/auth/Register'
 import DashboardLayout from './features/dashboards/DashboardLayout'
-import ProtectedRouter from './features/auth/components/ProtectedROuter'
 import PublicRoute from './features/auth/components/PublicRoute'
+import ProtectedRouter from './features/auth/components/ProtectedRouter'
 
 function App() {
   
