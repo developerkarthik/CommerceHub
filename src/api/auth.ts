@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient, { rawRequest } from './client';
 
 interface LoginRequest {
     username: string,
@@ -34,14 +34,39 @@ const register = (data: RegisterRequest) => {
 }
 
 
-const getMe = () => {
-    return apiClient<RegisterResponse>('/auth/me', {
+const getMe = async () => {
+    let response = await rawRequest('/auth/me', {
         method: 'GET'
     });
+
+    if(response.status === 401){
+        await refreshToken();
+            response = await rawRequest('/auth/me', {
+            method: 'GET'
+        });
+    }
+
+    return response.json();
+
+    // return apiClient<RegisterResponse>('/auth/me', {
+    //     method: 'GET'
+    // });
+}
+
+const refreshToken = async () => {
+    const response = await rawRequest('/auth/refresh', {
+        method: 'POST'
+    });
+
+    if(!response.ok){
+        throw new Error("Session/Token expired. Please login again.");
+    }
+    return response.json();
 }
 
 export default {
     login,
     register,
-    getMe
+    getMe,
+    refreshToken
 }
