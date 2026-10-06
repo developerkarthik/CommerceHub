@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import order from "../../api/order";
 import { useAuth } from "../auth/context/AuthProvider";
+import product from "../../api/product";
 
 const DashboardLayout = () => {
 
@@ -8,13 +9,20 @@ const DashboardLayout = () => {
 
     useEffect(()=> {
         try{
-            const fetchUser = async () => {
+            const fetchOrder = async () => {
                 const result = await order.fetchOrderById();
                 //console.log(result);
                 console.log(result);
             }
 
-            fetchUser();
+            const fetchProduct = async () => {
+                const result = await product.fetchProductById();
+                //console.log(result);
+                console.log(result);
+            }
+
+            fetchProduct();
+            fetchOrder();
         }catch(error){
             console.log(error);
         }

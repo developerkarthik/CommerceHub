@@ -1,5 +1,5 @@
 const API_BASE_URL = "http://localhost:8000";
-
+import auth from './auth'
 
 export const rawRequest = async (path: string , options: RequestInit):Promise<Response> => {
     return await fetch(`${API_BASE_URL}${path}`, {
@@ -14,7 +14,12 @@ export const rawRequest = async (path: string , options: RequestInit):Promise<Re
 
 const apiClient = async <T>(path: string , options: RequestInit):Promise<T | void> => {
     try{
-        const response = await rawRequest(path , options)
+        let response = await rawRequest(path , options)
+
+        if(response.status === 401){
+            await auth.refreshToken();
+            response = await rawRequest(path , options);
+        }
 
         if(!response.ok){
             throw new Error('Request failed:' + response.status);

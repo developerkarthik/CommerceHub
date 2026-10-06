@@ -63,7 +63,7 @@ const getMe = async () => {
 
         if(response.status === 401){
             await refreshToken();
-                response = await rawRequest('/auth/me', {
+            response = await rawRequest('/auth/me', {
                 method: 'GET'
             });
         }
@@ -78,15 +78,27 @@ const getMe = async () => {
     }
 }
 
-const refreshToken = async () => {
-    const response = await rawRequest('/auth/refresh', {
-        method: 'POST'
-    });
+// Single flight refresh call
 
-    if(!response.ok){
-        throw new Error("Session/Token expired. Please login again.");
+let refreshPromise:Promise <void> | null = null;
+
+const refreshToken = async () => {
+    if(!refreshPromise){
+        refreshPromise = await rawRequest('/auth/refresh', {
+            method: 'POST'
+        }).then((res) => {
+            if(!res.ok){
+                throw new Error("Session/Token expired. Please login again.");
+            }
+            return res.json();
+        }).catch((error) => {
+            console.log(error);
+        }).finally(() => {
+            refreshPromise = null;
+        });
     }
-    return response.json();
+    
+    return refreshPromise;
 }
 
 export default {
