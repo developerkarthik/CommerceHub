@@ -19,12 +19,33 @@ interface RegisterResponse {
     data: any
 }
 
+interface LogoutRequest {
+    family_id: string
+}
+
+interface LogoutResponse {
+    message: string
+}
+
 const login = (data: LoginRequest) => {
     return apiClient<LoginResponse>('/auth/login', {
         method: 'POST',
         body: JSON.stringify(data)
     })
 }
+
+const logout = () => {
+    return apiClient<LogoutResponse>('/auth/logout', {
+        method: 'POST'
+    })
+}
+
+const logoutAll = () => {
+    return apiClient<LogoutResponse>('/auth/logout-all', {
+        method: 'POST'
+    })
+}
+
 
 const register = (data: RegisterRequest) => {
     return apiClient<RegisterResponse>('/auth/register', {
@@ -35,22 +56,26 @@ const register = (data: RegisterRequest) => {
 
 
 const getMe = async () => {
-    let response = await rawRequest('/auth/me', {
-        method: 'GET'
-    });
-
-    if(response.status === 401){
-        await refreshToken();
-            response = await rawRequest('/auth/me', {
+    try{
+        let response = await rawRequest('/auth/me', {
             method: 'GET'
         });
+
+        if(response.status === 401){
+            await refreshToken();
+                response = await rawRequest('/auth/me', {
+                method: 'GET'
+            });
+        }
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        }
+
+        return response.json();
+    }catch(error){
+        console.log(error);
     }
-
-    return response.json();
-
-    // return apiClient<RegisterResponse>('/auth/me', {
-    //     method: 'GET'
-    // });
 }
 
 const refreshToken = async () => {
@@ -68,5 +93,7 @@ export default {
     login,
     register,
     getMe,
-    refreshToken
+    refreshToken,
+    logout,
+    logoutAll
 }

@@ -9,7 +9,9 @@ type AuthProviderValue = {
     user: User | undefined,
     status: AuthStatus,
     login: (username: string, password: string) => Promise<void>,
-    register: (username: string, password:string) => Promise<void>
+    register: (username: string, password:string) => Promise<void>,
+    logout: () => Promise<void>
+    logoutAll: () => Promise<void>
 }
 
 type AuthProviderProps = {
@@ -63,9 +65,25 @@ const AuthProvider = ({ children } : AuthProviderProps) => {
         await auth.register({ username, password });
     }
 
+    const logout = async () => {
+        await auth.logout();
+        setUser(undefined);
+        setStatus('unauthenticated');
+    }
+
+    const logoutAll = async () => {
+        try{
+            await auth.logoutAll();
+            setUser(undefined);
+            setStatus('unauthenticated');
+        }catch(error){  
+            console.log(error);
+        }
+        
+    }
 
     return (
-        <AuthContext.Provider value={ {user, status, login, register} }>
+        <AuthContext.Provider value={ {user, status, login, register, logout, logoutAll} }>
             {children}
         </AuthContext.Provider>
     )

@@ -12,17 +12,19 @@ export const rawRequest = async (path: string , options: RequestInit):Promise<Re
         });
 }
 
-const apiClient = async <T>(path: string , options: RequestInit):Promise<T> => {
+const apiClient = async <T>(path: string , options: RequestInit):Promise<T | void> => {
+    try{
         const response = await rawRequest(path , options)
 
-        if(response.status === 401){
-
-        }
         if(!response.ok){
             throw new Error('Request failed:' + response.status);
         }
 
         return response.json();
+    }catch(error){
+        console.log(error);
+    }
+        
 }
 
 
