@@ -21,8 +21,11 @@ const DashboardLayout = () => {
                 console.log(result);
             }
 
-            fetchProduct();
-            fetchOrder();
+            //await Promise.all([
+                fetchProduct();
+                fetchOrder();
+            //]);
+            
         }catch(error){
             console.log(error);
         }

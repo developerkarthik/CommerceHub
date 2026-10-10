@@ -1,12 +1,14 @@
 const API_BASE_URL = "http://localhost:8000";
+import readCookie from '../utils/readCookie';
 import auth from './auth'
 
-export const rawRequest = async (path: string , options: RequestInit):Promise<Response> => {
+export const rawRequest = async (path: string , options: RequestInit) => {
     return await fetch(`${API_BASE_URL}${path}`, {
             ...options,
             credentials: "include",
             headers:{
                 "Content-Type": "application/json",
+                "X-CSRF-Token": readCookie.getCsrfToken() ?? "",
                 ...options.headers
             }
         });

@@ -28,7 +28,7 @@ interface LogoutResponse {
 }
 
 const login = (data: LoginRequest) => {
-    return apiClient<LoginResponse>('/auth/login', {
+    return rawRequest('/auth/login', {
         method: 'POST',
         body: JSON.stringify(data)
     })
@@ -84,7 +84,7 @@ let refreshPromise:Promise <void> | null = null;
 
 const refreshToken = async () => {
     if(!refreshPromise){
-        refreshPromise = await rawRequest('/auth/refresh', {
+        refreshPromise = rawRequest('/auth/refresh', {
             method: 'POST'
         }).then((res) => {
             if(!res.ok){
