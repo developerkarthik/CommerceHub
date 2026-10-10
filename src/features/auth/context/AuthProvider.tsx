@@ -54,11 +54,19 @@ const AuthProvider = ({ children } : AuthProviderProps) => {
     }, [])
     
     const login = async (username: string, password: string) => {
-        await auth.login({username, password});
-        const response = await auth.getMe();
-        //console.log(response);
-        setUser(response.data);
-        setStatus('authenticated');
+        try{
+            const response = await auth.login({username, password});
+            if(!response.ok){
+                throw new Error(response.message)
+            }
+            const user = await auth.getMe();
+            //console.log(response);
+            setUser(user.data);
+            setStatus('authenticated');
+        }catch(error){
+            console.log(error);
+        }
+        
     }
 
     const register = async (username: string, password: string) => {
