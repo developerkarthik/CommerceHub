@@ -6,6 +6,7 @@ import Register from './features/auth/Register'
 import DashboardLayout from './features/dashboards/DashboardLayout'
 import PublicRoute from './features/auth/components/PublicRoute'
 import ProtectedRouter from './features/auth/components/ProtectedRouter'
+import ProductView from './features/products/ProductView'
 
 function App() {
   
@@ -19,6 +20,8 @@ function App() {
       
       <Route element={<ProtectedRouter />}>
         <Route path="/" element={<DashboardLayout />} />
+        <Route path="/products" element={<ProductView />}/>
+        <Route path="/product/:id" element={<ProductView />}/>
       </Route>
     </Routes>
     </>
